@@ -11,6 +11,7 @@ const getHotelRooms = async (req, res) => {
 
 const getHotelRoom = async (req, res) => {
   try {
+    connsole.log(req.user)
     const { id } = req.params;
     const hotel1 = await Room.findById(id);
     res.status(200).json(hotel1);
@@ -20,8 +21,13 @@ const getHotelRoom = async (req, res) => {
 };
 
 const createHotelRoom = async (req, res) => {
+const user = req.user
   console.log("body: ", req.body)   
   try {
+if (!user.admin){
+  throw Error("user not authorized")
+
+}
     const { name, roomType, quantity, price  } = req.body;
     
     const room = await Room.create({

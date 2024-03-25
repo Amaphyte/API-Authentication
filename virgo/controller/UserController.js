@@ -1,5 +1,10 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
+
+const createToken = (_id) => {
+  return  jwt.sign({_id}, process.env.SECRET, {expiresIn: "3d"})
+}
 
 const getUsers = async (req, res) => {
   try {
@@ -73,11 +78,29 @@ const deleteUser = async (req, res) => {
 };
 
 
-const userSignup = (req, res) => {
+const userSignup = async(req, res) => {
+  console.log("hey")
+  const {email, password,name} = req.body
     try{
+        const user = await User.Signup(email, password, name)
+       const token = createToken(user._id)
+        res.status(200).json({email, token, message:"successfully signup"})
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+}
 
-    } catch {
+const userLogin = async(req, res) => {
 
+  const {email, password} = req.body
+
+  console.log("password: ", password)
+    try{
+        const user = await User.Login(email, password)
+        const token = createToken(user._id)
+        res.status(200).json({email, token, message:"successfully login"})
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
 }
 
@@ -86,5 +109,7 @@ module.exports = {
   getUser,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  userSignup,
+  userLogin
 };

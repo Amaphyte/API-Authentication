@@ -1,4 +1,5 @@
 const express = require("express");
+const requireAuth = require("../middleware/requireAuth.js")
 const router = express.Router();
 const {
   getHotelRooms,
@@ -7,6 +8,8 @@ const {
   createHotelRoom,
   updateHotelRoom
 } = require("../controller/HotelRoom.controller.js");
+
+router.use(requireAuth)
 
 //To get Lisof Rooms
 router.get("/", getHotelRooms);

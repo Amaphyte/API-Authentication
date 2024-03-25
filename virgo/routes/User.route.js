@@ -6,7 +6,8 @@ const {
     createUser,
     updateUser,
     deleteUser,
-    userSignup
+    userSignup,
+    userLogin
 } = require("../controller/UserController.js");
 
 
@@ -16,7 +17,10 @@ router.get("/", getUsers);
 router.get("/:id", getUser);
 //To create an Hotel Room
 router.post("/", createUser);
-// router.post("/signup", userSignup)
+//to signup user
+ router.post("/signup", userSignup)
+ //to login
+ router.post("/login", userLogin)
 //To update an Hotel Room
 router.patch("/:id", updateUser);
 //To delete an Hotel Room
