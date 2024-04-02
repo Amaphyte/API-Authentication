@@ -1,38 +1,55 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const User = require("../models/user");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const createToken = (_id) => {
-    return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "3d" });
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
-const getUsers = async (req, res) => {
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const node_process_1 = require("node:process");
+const user_1 = __importDefault(require("../models/user"));
+const Login_1 = require("../Auth/Login");
+const Signup_1 = require("../Auth/Signup");
+const createToken = (_id) => {
+    const Secret = node_process_1.env.SECRET;
+    console.log("process secret: ", node_process_1.env.SECRET);
+    return jsonwebtoken_1.default.sign({ _id }, Secret, { expiresIn: "3d" });
+};
+const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = await User.find();
+        const user = yield user_1.default.find();
         res.status(200).json(user);
     }
     catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
-const getUser = async (req, res) => {
+});
+const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const user = await User.findById(id);
+        const user = yield user_1.default.findById(id);
         res.status(200).json(user);
     }
     catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
-const createUser = async (req, res) => {
+});
+const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, email, password, admin } = req.body;
         console.log("password: ", password);
-        const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(password, salt);
+        const salt = yield bcrypt_1.default.genSalt(10);
+        const hash = yield bcrypt_1.default.hash(password, salt);
         console.log("hash : ", hash);
-        const user = await User.create({
+        const user = yield user_1.default.create({
             name,
             email,
             password: hash,
@@ -44,53 +61,54 @@ const createUser = async (req, res) => {
     catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
-const updateUser = async (req, res) => {
+});
+const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const update = req.body;
         console.log("update: ", update);
-        const userupdate = await User.findByIdAndUpdate(id, update);
+        const userupdate = yield user_1.default.findByIdAndUpdate(id, update);
         res.status(200).json(userupdate);
     }
     catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
-const deleteUser = async (req, res) => {
+});
+const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const deleteUser = await User.findByIdAndDelete(id);
+        const deleteUser = yield user_1.default.findByIdAndDelete(id);
         res.status(200).json(deleteUser);
     }
     catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
-const userSignup = async (req, res) => {
+});
+const userSignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("hey");
     const { email, password, name } = req.body;
     try {
-        const user = await User.Signup(email, password, name);
+        const user = yield (0, Signup_1.Signup)(email, password, name);
         const token = createToken(user._id);
         res.status(200).json({ email, token, message: "successfully signup" });
     }
     catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
-const userLogin = async (req, res) => {
+});
+const userLogin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     console.log("password: ", password);
     try {
-        const user = await User.Login(email, password);
+        const user = yield (0, Login_1.Login)(email, password);
+        console.log("user check: ", user);
         const token = createToken(user._id);
         res.status(200).json({ email, token, message: "successfully login" });
     }
     catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+});
 const userFunc = {
     getUsers,
     getUser,

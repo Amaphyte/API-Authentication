@@ -1,8 +1,12 @@
-import { model, models, Schema} from "mongoose";
+import { model, models, Schema, Model} from "mongoose";
 import bcrypt from "bcrypt"
 import validator from "validator"
+import { userInterface } from "../interface/userInterface";
+import { UserObj } from "../interface/UserObj";
 
-const userSchema =  new Schema({
+
+
+const userSchema = new Schema({
     email: {
         type: String,
         unique: true,
@@ -35,68 +39,70 @@ const userSchema =  new Schema({
 },{timestamps: true})
 
 
-userSchema.statics.Signup = async function(email, password, name ) {
-    if(!email|| !password || !name){
-        throw Error("Enter email or password")
-    }
-    const emailCheck = validator.isEmail(email)
-    if (emailCheck) {
-        const exist = await this.findOne({email: email })
-        const users = await this.find()
-            users.forEach(user => {
-                if (user.name === name ){
-                    throw Error("username already exist")
-                }
-            });
+// userSchema.statics.Signup = async function(email: string, password: string, name:string ): Promise<userInterface | null> {
+//     if(!email|| !password || !name){
+//         throw Error("Enter email or password")
+//     }
+//     const emailCheck = validator.isEmail(email)
+    
+    
+//     if (emailCheck) {
+//         const exist = await this.findOne({email: email })
+//         const users: userInterface[] = await this.find()
+//         users.forEach(user => {
+//                 if (user.name === name ){
+//                     throw Error("username already exist")
+//                 }
+//         });
        
-        
-    if (exist) {
-        throw Error("user already exists")
-    } else {
+//         if (exist) {
+//         throw Error("user already exists")
+//         } else {
 
-        
+//         const salt = await bcrypt.genSalt(10)
+//         const hash = await bcrypt.hash(password, salt)
+//         console.log("hash : ", hash )
+
+//         const user = await this.create({
+//             name, 
+//             email, 
+//             password:hash, 
+//             admin: false
+//         })
+    
+//         return user
+//     }
+//     }
+
+    
+// return null
+    
+    
+// }
+
+
+// userSchema.statics.Login = async function(email: string, password: string): Promise<userInterface | null> {
+//     console.log("inside login password: ", password)
+//     if(!email || !password){
+//         throw Error("Enter email or password")
+//     }
    
-
-
-        const salt = await bcrypt.genSalt(10)
-
-    const hash = await bcrypt.hash(password, salt)
-    console.log("hash : ", hash )
-
-    const user = await this.create({name, email, password:hash, admin: false})
-    return user
-    }
-    }
-
-    
-
-    
-    
-}
-
-
-userSchema.statics.Login = async function(email, password ) {
-    console.log("inside login password: ", password)
-    if(!email || !password){
-        throw Error("Enter email or password")
-    }
-   
-    const user = await this.findOne({email: email })
-    console.log("user password: ", user)
-        if (user) {
-            const match = await bcrypt.compare( password, user.password)
-            console.log("match : ", match )
-            if (!match) {
-                throw Error("incorrect password")
-            } else {
-                return user
-            }
+//     const user = await this.findOne({email: email })
+//     console.log("user password: ", user)
+//         if (user) {
+//             const match = await bcrypt.compare( password, user.password)
+//             console.log("match : ", match )
+//             if (!match) {
+//                 throw Error("incorrect password")
+//             } else {
+//                 return user
+//             }
             
             
-        }
-   
+//         }
+//         return null
     
-    }
+//     }
 
     
 
@@ -104,6 +110,6 @@ userSchema.statics.Login = async function(email, password ) {
     
 
 
-const User = models.Users || model("Users", userSchema)
+const User = models.Users || model("Users", userSchema);
 export default User
 

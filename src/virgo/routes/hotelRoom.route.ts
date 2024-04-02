@@ -1,9 +1,12 @@
-import express from "express";
+import express, { Response, NextFunction} from "express";
 import requireAuth from "../middleware/requireAuth.js"
-
+import { reqq } from "../interface/reqq";
 import hotelFunc from "../controller/HotelRoom.controller.js";
 
 const router = express.Router();
+
+
+type mid = (req: reqq, res: Response, next: NextFunction) => Promise<Response<any, Record<string, any>> | undefined>
 
 router.use(requireAuth)
 
